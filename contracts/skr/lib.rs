@@ -1,74 +1,75 @@
 #![cfg_attr(not(feature = "std"), no_std)]
+#![feature(min_specialization)]
 
-use ink_lang as ink;
+/// This contract will be used to represent the shares of a user
+/// and other instance of this contract will be used to represent
+/// the amount of borrowed tokens
+#[brush::contract]
+pub mod skr {
+    use brush::contracts::{
+        access_control::*,
+        psp22::extensions::{burnable::*, metadata::*, mintable::*},
+    };
 
-#[ink::contract]
-mod skr {
+    use brush::modifiers;
 
-    /// Defines the storage of your contract.
-    /// Add new fields to the below struct in order
-    /// to add new static storage fields to your contract.
+    //use ink_lang::codegen::Env;
+
+    use ink_prelude::string::String;
+    use ink_storage::traits::SpreadAllocate;
+
+    use ink_sai::traits::token::*;
+
+    /// Define the storage for PSP22 data, Metadata data and Ownable data
     #[ink(storage)]
+    #[derive(Default, SpreadAllocate, PSP22Storage, AccessControlStorage, PSP22MetadataStorage)]
     pub struct Skr {
-        /// Stores a single `bool` value on the storage.
-        value: bool,
+        #[PSP22StorageField]
+        psp22: PSP22Data,
+        #[AccessControlStorageField]
+        access: AccessControlData,
+        #[PSP22MetadataStorageField]
+        metadata: PSP22MetadataData,
     }
+    const TUB_OR_TAP: RoleType = ink_lang::selector_id!("TUB_OR_TAP");
+    // implement PSP22 Trait for our share
+    impl PSP22 for Skr {}
+
+    // implement Ownable Trait for our share
+    impl AccessControl for Skr {}
+
+    // implement Metadata Trait for our share
+    impl PSP22Metadata for Skr {}
+
+    impl PSP22Burnable for Skr {
+        #[ink(message)]
+        #[modifiers(only_role(TUB_OR_TAP))]
+        fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            self._burn_from(account, amount)
+        }
+    }
+
+    impl PSP22Mintable for Skr {
+        #[ink(message)]
+        #[modifiers(only_role(TUB_OR_TAP))]
+        fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
+            self._mint(account, amount)
+        }
+    }
+    // It forces the compiler to check that you implemented all super traits
+    impl Token for Skr {}
 
     impl Skr {
-        /// Constructor that initializes the `bool` value to the given `init_value`.
+        /// constructor with name and symbol
         #[ink(constructor)]
-        pub fn new(init_value: bool) -> Self {
-            Self { value: init_value }
-        }
-
-        /// Constructor that initializes the `bool` value to `false`.
-        ///
-        /// Constructors can delegate to other constructors.
-        #[ink(constructor)]
-        pub fn default() -> Self {
-            Self::new(Default::default())
-        }
-
-        /// A message that can be called on instantiated contracts.
-        /// This one flips the value of the stored `bool` from `true`
-        /// to `false` and vice versa.
-        #[ink(message)]
-        pub fn flip(&mut self) {
-            self.value = !self.value;
-        }
-
-        /// Simply returns the current value of our `bool`.
-        #[ink(message)]
-        pub fn get(&self) -> bool {
-            self.value
-        }
-    }
-
-    /// Unit tests in Rust are normally defined within such a `#[cfg(test)]`
-    /// module and test functions are marked with a `#[test]` attribute.
-    /// The below code is technically just normal Rust code.
-    #[cfg(test)]
-    mod tests {
-        /// Imports all the definitions from the outer scope so we can use them here.
-        use super::*;
-
-        /// Imports `ink_lang` so we can use `#[ink::test]`.
-        use ink_lang as ink;
-
-        /// We test if the default constructor does its job.
-        #[ink::test]
-        fn default_works() {
-            let skr = Skr::default();
-            assert_eq!(skr.get(), false);
-        }
-
-        /// We test a simple use case of our contract.
-        #[ink::test]
-        fn it_works() {
-            let mut skr = Skr::new(false);
-            assert_eq!(skr.get(), false);
-            skr.flip();
-            assert_eq!(skr.get(), true);
+        pub fn new(name: Option<String>, symbol: Option<String>) -> Self {
+            ink_lang::codegen::initialize_contract(|instance: &mut Skr| {
+                instance.metadata.name = name;
+                instance.metadata.symbol = symbol;
+                instance.metadata.decimals = 18;
+                let caller = instance.env().caller();
+                instance._init_with_admin(caller);
+            })
         }
     }
 }

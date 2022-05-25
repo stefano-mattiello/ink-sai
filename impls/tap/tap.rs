@@ -36,7 +36,7 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
     default fn heal(&self) -> Result<(), TapError> {
         let joy = self.joy();
         let woe = self.woe();
-        if joy != 0 && woe != 0 {
+        if joy == 0 || woe == 0 {
             return Ok(());
         }
         let wad = self._min(joy, woe);
@@ -79,7 +79,8 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
             Self::env().caller(),
             wad,
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
         PSP22Ref::transfer_from_builder(
@@ -88,16 +89,15 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
             Self::env().account_id(),
             amount_of_sai,
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
+        self.heal()?;
         Ok(())
     }
 
     default fn flop(&self, wad: u128) -> Result<(), TapError> {
-        if self._add(self.joy(), self.ask(wad)) > self.woe() {
-            return Err(TapError::InvalidFlop);
-        }
         let fog = self.fog();
         TokenRef::mint(
             &TapStorage::get(self).skr_address,
@@ -105,6 +105,9 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
             self._sub(wad, fog),
         )?;
         self.flip(wad)?;
+        if self.joy() != 0 {
+            return Err(TapError::InvalidFlop);
+        }
         Ok(())
     }
 
@@ -115,7 +118,8 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
             Self::env().caller(),
             self.bid(wad),
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
         TokenRef::burn(
@@ -130,7 +134,7 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
         if wad > self.fog() {
             self.flop(wad)?;
         } else {
-            self.flap(wad)?;
+            self.flip(wad)?;
         }
         Ok(())
     }
@@ -161,7 +165,8 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
             Self::env().caller(),
             self._rmul(wad, fix),
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
         Ok(())
@@ -181,7 +186,8 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
             Self::env().account_id(),
             self._rmul(wad, fix),
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
         Ok(())

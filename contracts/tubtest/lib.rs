@@ -107,8 +107,8 @@ pub mod tubtest {
         /// Imports `ink_lang` so we can use `#[ink::test]`.
         use ink_lang as ink;
         pub const WAD: u128 = 1000000000000000000;
-        fn instance_with_role(account: AccountId) -> TubTest {
-            let mut tubtest = TubTest::new(
+        fn instance_with_role(account: AccountId) -> Tubtest {
+            let mut tubtest = Tubtest::new(
                 account, account, account, account, account, account, account, account, account,
             );
             let alice = ink_env::test::default_accounts::<ink_env::DefaultEnvironment>().alice;

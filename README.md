@@ -8,7 +8,7 @@ In the following section there is a short extract from the README of the origina
 ## Overview
 <em>Note that this is an extract taken from [here](https://github.com/makerdao/sai#readme)</em>
   
-```sai``` is a simple single-collateral stablecoin that is dependent on a trusted oracle address and has a kill-switch.
+ ```sai``` is a simple single-collateral stablecoin that is dependent on a trusted oracle address and has a kill-switch.
 
 See the developer documentation for a more technical overview.
 
@@ -29,13 +29,13 @@ Collateral holders deposit their collateral using ```join``` and receive ```skr`
 
 The oracle updates the ```GEM:REF``` and ```GOV:REF``` price feeds. These are the only external real-time input to the system.
 
-```skr``` is used as the direct backing collateral for CDPs (Collateralized Debt Positions). A prospective issuer can ```open``` an empty position, ```lock``` some ```skr``` and then ```draw``` some ```sai```. Debt is covered with ```wipe```. Collateral can be reclaimed with ```free``` as long as the CDP remains "```safe```".
+ ```skr``` is used as the direct backing collateral for CDPs (Collateralized Debt Positions). A prospective issuer can ```open``` an empty position, ```lock``` some ```skr``` and then ```draw``` some ```sai```. Debt is covered with ```wipe```. Collateral can be reclaimed with ```free``` as long as the CDP remains "```safe```".
 
 If the value of the collateral backing the CDP falls below the liquidation ratio ```mat```, the CDP is vulnerable to liquidation via ```bite```. On liquidation, the CDP ```skr``` collateral is sold off to cover the ```sai``` debt.
 
 Under-collateralized CDPs can be liquidated with ```bite```. Liquidation is immediate: backing ```skr``` is taken to cover the ```sai``` debt at the time of ```bite```, plus a liquidation fee(```axe```); any excess remains in the CDP.
 
-```skr``` seized from bad CDPs can be purchased with ```bust```, in exchange for ```sai``` at the ```s2s``` price. This ```sai``` pays down the bad CDP debt.
+ ```skr``` seized from bad CDPs can be purchased with ```bust```, in exchange for ```sai``` at the ```s2s``` price. This ```sai``` pays down the bad CDP debt.
 
 Any remaining Sai surplus (```joy```) can be purchased with ```boom```, in exchange for ```skr``` at the ```s2s``` price. This ```skr``` is burned.
 
@@ -128,18 +128,24 @@ and then
 This will build the artifact needed by Redspot and it can take some time.
 Finally, with your substrate contract node running, you can run
 
-    npx redspot test --no-compile
+    npx redspot test --no-compile 2>/dev/null
 
-Unfortunately redspot will throw a warning similar to
+ ```2>/dev/null``` is used on Linux to hide warnings similar to
 
      WARN  Unable to find handler for subscription=author_extrinsicUpdate::9n1sDo4k8OkoypJB
      
-for every interaction with the node, however the test are working fine.
+that Redspot otherwise throws for every interaction with the node, however the tests run even without this option.
 
+Moreover running all the tests at once may slow down Redspot and it can throw a timeout error on the tests that require more than a minute.
+Run for example
+
+	npx redspot test ./tests/ink_sai/tubtest.ts --no-compile 2>/dev/null
+
+to run only the test of the ```tubtest.ts``` file.
 
 ## Deploy
 
-Currently there is not a script or a contract to deploy all the structure of the project, however the setup function in ```tests/saitest.ts``` can be an example of what should be done.
+Currently there is not a script or a contract to deploy all the structure of the project, however the setup function in ```tests/helpers.ts``` can be an example of what should be done.
 
 
 ## Contributing

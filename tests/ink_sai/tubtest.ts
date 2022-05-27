@@ -80,22 +80,6 @@ describe('TUB', () => {
     expect((await tub.query.tag()).output).to.eq(new_expected_tag)
   })
 
-
-  it('Test Per', async () => {
-    const { tub, sai, sin, skr, gem, pip, vox, alice } = await setup()
-
-
-    const amount = "5000000000000000000";
-    const per = '1000000000000000000000000000'
-
-    await expect(gem.tx.mint(alice.address, amount)).to.eventually.be.fulfilled
-    await expect(fromSigner(gem.contract, alice.address).tx.increaseAllowance(tub.contract.address, amount)).to.eventually.be.fulfilled
-    await expect(fromSigner(tub.contract, alice.address).tx.join(amount)).to.eventually.be.fulfilled
-
-    expect((await skr.query.totalSupply()).output).to.eq(amount)
-    expect((await tub.query.per()).output).to.eq(per)
-  })
-
   it('Test Tag', async () => {
     const { tub, sai, sin, skr, gem, pip, vox, alice } = await setup()
     const ray = '1000000000000000000000000000';

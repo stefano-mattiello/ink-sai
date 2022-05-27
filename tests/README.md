@@ -1,5 +1,7 @@
 ## Tests
 
+The ```tubtest.ts``` file contains the tests corresponding to the ones present in the [```tub.t.sol```](https://github.com/makerdao/sai/blob/master/src/tub.t.sol) file of the original sai repository while in the others files there are the tests corresponding to the [```sai.t.sol```](https://github.com/makerdao/sai/blob/master/src/sai.t.sol) file.
+
 The tests in this directory must be run with [Redspot](https://docs.patract.io/en/redspot/intro/overview). For a detailed description of how to run the tests see the ```run tests``` section in [here](https://github.com/stefano-mattiello/ink-sai#readme).
 
 ## Constants

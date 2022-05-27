@@ -2,10 +2,7 @@ use brush::contracts::traits::access_control::*;
 use brush::contracts::traits::pausable::*;
 use brush::contracts::traits::psp22::*;
 use brush::traits::Balance;
-//use ink_storage::traits::{PackedLayout, SpreadLayout};
 
-//#[cfg(feature = "std")]
-//use ink_storage::traits::StorageLayout;
 #[brush::wrapper]
 pub type TapTraitRef = dyn TapTrait + AccessControl;
 
@@ -60,7 +57,6 @@ pub trait TapTrait: AccessControl {
     fn vent(&mut self) -> Result<(), TapError>;
 }
 
-/// Enum of errors raised by our lending smart contract
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub enum TapError {

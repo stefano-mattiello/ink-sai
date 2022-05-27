@@ -1,8 +1,5 @@
 use brush::traits::AccountId;
-//use ink_storage::traits::{PackedLayout, SpreadLayout};
 
-//#[cfg(feature = "std")]
-//use ink_storage::traits::StorageLayout;
 #[brush::wrapper]
 pub type PitTraitRef = dyn PitTrait;
 

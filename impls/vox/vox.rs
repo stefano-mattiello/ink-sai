@@ -1,12 +1,9 @@
-// importing everything publicly from traits allows you to import every stuff related to lending
-// by one import
 pub use super::data::*;
 pub use crate::traits::oracle::OracleTraitRef;
 use crate::traits::somemath::*;
 pub use crate::traits::token::TokenRef;
 
 pub use crate::traits::vox::*;
-//use crate::traits::vox::VoxTraitRef;
 use brush::{contracts::access_control::*, modifiers, traits::Timestamp};
 
 pub const MOM: RoleType = ink_lang::selector_id!("MOM");
@@ -48,7 +45,8 @@ impl<T: VoxStorage + AccessControlStorage + SomeMath> VoxTrait for T {
         let way = VoxStorage::get(self).way;
         if way != self._ray() {
             let par = VoxStorage::get(self).par;
-            VoxStorage::get_mut(self).par = self._rmul(par, self._rpow(way, age.into()))
+            let new_par = self._rmul(par, self._rpow(way, age.into()));
+            VoxStorage::get_mut(self).par = new_par;
         }
         let how = VoxStorage::get(self).how;
         if how != 0 {

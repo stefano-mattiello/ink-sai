@@ -1,22 +1,14 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
-/// This contract will be used to represent the shares of a user
-/// and other instance of this contract will be used to represent
-/// the amount of borrowed tokens
 #[brush::contract]
 pub mod toptest {
     use brush::contracts::access_control::*;
-
-    //use brush::modifiers;
-
-    //use ink_lang::codegen::Env;
     use ink_sai::impls::top::*;
     use ink_sai::traits::somemath::*;
     use ink_sai::traits::tub::TubTraitRef;
     use ink_storage::traits::SpreadAllocate;
 
-    /// Define the storage for PSP22 data, Metadata data and Ownable data
     #[ink(storage)]
     #[derive(Default, SpreadAllocate, AccessControlStorage, TopStorage)]
     pub struct Toptest {
@@ -26,18 +18,16 @@ pub mod toptest {
         top: TopData,
         era: Timestamp,
     }
-    // implement Ownable Trait for our share
     impl AccessControl for Toptest {}
     impl SomeMath for Toptest {}
     impl TopTrait for Toptest {
-    	#[ink(message)]
-    	//override era function to make tests
+        #[ink(message)]
+        //override era function to make tests
         fn era(&self) -> Timestamp {
             self._era()
         }
     }
     impl Toptest {
-        /// constructor with name and symbol
         #[ink(constructor)]
         pub fn new(tub_address: AccountId, tap_address: AccountId) -> Self {
             ink_lang::codegen::initialize_contract(|instance: &mut Toptest| {
@@ -73,7 +63,5 @@ pub mod toptest {
                 self.era = era + age;
             }
         }
-        
-        
     }
 }

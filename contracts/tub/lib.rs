@@ -1,22 +1,13 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
-/// This contract will be used to represent the shares of a user
-/// and other instance of this contract will be used to represent
-/// the amount of borrowed tokens
 #[brush::contract]
 pub mod tub {
     use brush::{contracts::access_control::*, traits::ZERO_ADDRESS};
-
-    //use brush::modifiers;
-
-    //use ink_lang::codegen::Env;
-    use ink_storage::traits::SpreadAllocate;
-
     use ink_sai::impls::tub::*;
     use ink_sai::traits::somemath::*;
+    use ink_storage::traits::SpreadAllocate;
 
-    /// Define the storage for PSP22 data, Metadata data and Ownable data
     #[ink(storage)]
     #[derive(Default, SpreadAllocate, AccessControlStorage, TubStorage)]
     pub struct Tub {
@@ -25,15 +16,10 @@ pub mod tub {
         #[TubStorageField]
         tub: TubData,
     }
-    //const TUB_OR_TAP: RoleType = ink_lang::selector_id!("TUB_OR_TAP");
-    // implement PSP22 Trait for our share
-
-    // implement Ownable Trait for our share
     impl AccessControl for Tub {}
     impl SomeMath for Tub {}
     impl TubTrait for Tub {}
     impl Tub {
-        /// constructor with name and symbol
         #[ink(constructor)]
         pub fn new(
             sai_address: AccountId,

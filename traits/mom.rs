@@ -3,10 +3,7 @@ use crate::traits::tub::TubError;
 use brush::contracts::traits::access_control::*;
 use brush::contracts::traits::psp22::*;
 use brush::traits::AccountId;
-//use ink_storage::traits::{PackedLayout, SpreadLayout};
 
-//#[cfg(feature = "std")]
-//use ink_storage::traits::StorageLayout;
 #[brush::wrapper]
 pub type MomTraitRef = dyn MomTrait + AccessControl;
 
@@ -49,7 +46,6 @@ pub trait MomTrait: AccessControl {
     fn set_how(&mut self, ray: u128) -> Result<(), MomError>;
 }
 
-/// Enum of errors raised by our lending smart contract
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub enum MomError {

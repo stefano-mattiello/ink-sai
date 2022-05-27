@@ -1,19 +1,13 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
 
-/// This contract will be used to represent the shares of a user
-/// and other instance of this contract will be used to represent
-/// the amount of borrowed tokens
 #[brush::contract]
 pub mod voxtest {
     use brush::contracts::access_control::*;
-
-    //use ink_lang::codegen::Env;
     use ink_sai::impls::vox::*;
     use ink_sai::traits::somemath::*;
     use ink_storage::traits::SpreadAllocate;
 
-    /// Define the storage for PSP22 data, Metadata data and Ownable data
     #[ink(storage)]
     #[derive(Default, SpreadAllocate, VoxStorage, AccessControlStorage)]
     pub struct VoxTest {
@@ -105,13 +99,12 @@ pub mod voxtest {
             voxtest.tune(ray(2000000000000000))?;
             Ok(voxtest)
         }
-        /// We test if the default constructor does its job.
+
         #[ink::test]
         fn new_works() {
             let voxtest = VoxTest::new(RAY);
             assert_eq!(voxtest.era(), 0);
         }
-        /// We test a simple use case of our contract.
         #[ink::test]
         fn vox_default_par_works() {
             let mut voxtest = VoxTest::new(RAY);

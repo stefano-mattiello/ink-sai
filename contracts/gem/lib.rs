@@ -5,12 +5,11 @@
 pub mod gem {
     use brush::contracts::psp22::extensions::{burnable::*, metadata::*, mintable::*};
 
-    //use ink_lang::codegen::Env;
 
     use ink_prelude::string::String;
     use ink_storage::traits::SpreadAllocate;
 
-    /// Define the storage for PSP22 data, Metadata data and Ownable data
+ 
     #[ink(storage)]
     #[derive(Default, SpreadAllocate, PSP22Storage, PSP22MetadataStorage)]
     pub struct Gem {
@@ -20,17 +19,17 @@ pub mod gem {
         metadata: PSP22MetadataData,
     }
 
-    // implement PSP22 Trait for our share
+    // implement PSP22 Trait for our gem
     impl PSP22 for Gem {}
 
-    // implement Ownable Trait for our share
-
-    // implement Metadata Trait for our share
+    // implement Metadata Trait for our gem
     impl PSP22Metadata for Gem {
     }
 
+    // implement Burnable Trait for our gem
     impl PSP22Burnable for Gem {}
 
+    // implement Mintable Trait for our gem
     impl PSP22Mintable for Gem {
         #[ink(message)]
         fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {

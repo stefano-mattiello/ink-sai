@@ -18,8 +18,6 @@ pub trait SomeMath {
             .unwrap()
             / U256::from(self._ray());
         result.as_u128()
-        //((x * y) + (self._ray() / 2)) / self._ray()
-        //(x/10000000000000)*(y/100000000000000)
     }
     #[ink(message)]
     fn _rdiv(&self, x: u128, y: u128) -> u128 {
@@ -30,8 +28,6 @@ pub trait SomeMath {
             .unwrap()
             / U256::from(y);
         result.as_u128()
-        //((x * y) + (self._ray() / 2)) / self._ray()
-        //(x/y)*self._ray()
     }
     #[ink(message)]
     fn _wdiv(&self, x: u128, y: u128) -> u128 {

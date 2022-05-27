@@ -18,7 +18,6 @@ pub type TubTraitRef = dyn TubTrait + AccessControl;
 
 #[brush::trait_definition]
 pub trait TubTrait: AccessControl {
-    /// This function initalizes data of a loan and mint token inside it
     #[ink(message)]
     fn era(&self) -> Timestamp;
     #[ink(message)]
@@ -53,7 +52,6 @@ pub trait TubTrait: AccessControl {
     fn ink(&self, cup: u128) -> Balance;
     #[ink(message)]
     fn get_rum(&self) -> u128;
-	
     #[ink(message)]
     fn art(&self, cup: u128) -> Balance;
     #[ink(message)]
@@ -147,7 +145,6 @@ pub trait TubTrait: AccessControl {
     fn flow(&mut self) -> Result<(), TubError>;
 }
 
-/// Enum of errors raised by our lending smart contract
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub enum TubError {

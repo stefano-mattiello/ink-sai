@@ -3,10 +3,7 @@ use crate::traits::tub::*;
 use brush::contracts::traits::access_control::*;
 use brush::contracts::traits::psp22::*;
 use brush::traits::Timestamp;
-//use ink_storage::traits::{PackedLayout, SpreadLayout};
 
-//#[cfg(feature = "std")]
-//use ink_storage::traits::StorageLayout;
 #[brush::wrapper]
 pub type TopTraitRef = dyn TopTrait + AccessControl;
 
@@ -14,10 +11,8 @@ pub type TopTraitRef = dyn TopTrait + AccessControl;
 pub trait TopTrait: AccessControl {
     #[ink(message)]
     fn era(&self) -> Timestamp;
-    
     #[ink(message)]
     fn fix(&self) -> u128;
-    
     #[ink(message)]
     fn fit(&self) -> u128;
 
@@ -33,7 +28,6 @@ pub trait TopTrait: AccessControl {
     fn set_cooldown(&mut self, cooldown: u64) -> Result<(), TopError>;
 }
 
-/// Enum of errors raised by our lending smart contract
 #[derive(Debug, PartialEq, Eq, scale::Encode, scale::Decode)]
 #[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
 pub enum TopError {

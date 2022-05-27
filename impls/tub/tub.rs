@@ -1,12 +1,9 @@
-// importing everything publicly from traits allows you to import every stuff related to lending
-// by one import
 pub use super::data::*;
 pub use crate::traits::oracle::OracleTraitRef;
 use crate::traits::somemath::*;
 pub use crate::traits::token::TokenRef;
 pub use crate::traits::tub::*;
 pub use crate::traits::vox::*;
-//use crate::traits::vox::VoxTraitRef;
 use brush::{
     contracts::{access_control::*, traits::psp22::PSP22Ref},
     modifiers,
@@ -61,8 +58,6 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
     default fn era(&self) -> Timestamp {
         Self::env().block_timestamp()
     }
-    
-    
 
     default fn lad(&self, cup: u128) -> AccountId {
         TubStorage::get(self)
@@ -90,61 +85,56 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
     }
     default fn art(&self, cup: u128) -> Balance {
         TubStorage::get(self)
-                .cups
-                .get(cup)
-                .unwrap_or(Cup {
-                    lad: ZERO_ADDRESS.into(),
-                    ink: 0,
-                    art: 0,
-                    ire: 0,
-                })
-                .art
+            .cups
+            .get(cup)
+            .unwrap_or(Cup {
+                lad: ZERO_ADDRESS.into(),
+                ink: 0,
+                art: 0,
+                ire: 0,
+            })
+            .art
     }
     default fn ire(&self, cup: u128) -> Balance {
         TubStorage::get(self)
-                .cups
-                .get(cup)
-                .unwrap_or(Cup {
-                    lad: ZERO_ADDRESS.into(),
-                    ink: 0,
-                    art: 0,
-                    ire: 0,
-                })
-                .ire
+            .cups
+            .get(cup)
+            .unwrap_or(Cup {
+                lad: ZERO_ADDRESS.into(),
+                ink: 0,
+                art: 0,
+                ire: 0,
+            })
+            .ire
     }
     default fn tab(&mut self, cup: u128) -> Balance {
         let chi = self.get_chi().unwrap();
-        let art=TubStorage::get(self)
-                .cups
-                .get(cup)
-                .unwrap_or(Cup {
-                    lad: ZERO_ADDRESS.into(),
-                    ink: 0,
-                    art: 0,
-                    ire: 0,
-                })
-                .art;
-        self._rmul(art ,
-            chi,
-        )
+        let art = TubStorage::get(self)
+            .cups
+            .get(cup)
+            .unwrap_or(Cup {
+                lad: ZERO_ADDRESS.into(),
+                ink: 0,
+                art: 0,
+                ire: 0,
+            })
+            .art;
+        self._rmul(art, chi)
     }
     default fn rap(&mut self, cup: u128) -> u128 {
         let rhi = self.get_rhi().unwrap();
         let tab = self.tab(cup);
-        let ire=TubStorage::get(self)
-                    .cups
-                    .get(cup)
-                    .unwrap_or(Cup {
-                        lad: ZERO_ADDRESS.into(),
-                        ink: 0,
-                        art: 0,
-                        ire: 0,
-                    })
-                    .ire;
-        self._sub(
-            self._rmul(ire,rhi),
-            tab,
-        )
+        let ire = TubStorage::get(self)
+            .cups
+            .get(cup)
+            .unwrap_or(Cup {
+                lad: ZERO_ADDRESS.into(),
+                ink: 0,
+                art: 0,
+                ire: 0,
+            })
+            .ire;
+        self._sub(self._rmul(ire, rhi), tab)
     }
     default fn din(&mut self) -> u128 {
         let chi = self.get_chi().unwrap();
@@ -251,7 +241,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             to,
             amount_of_gem,
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
         /*PSP22Ref::transfer_from(
@@ -278,7 +269,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             Self::env().caller(),
             amount_of_gem,
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
         TokenRef::burn(
@@ -310,8 +302,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         let mut new_inc;
         if TubStorage::get(self).tax != self._ray() {
             let chi_ = TubStorage::get(self).chi;
-            let tax=TubStorage::get(self).tax;
-            new_inc = self._rpow(tax,age.into());
+            let tax = TubStorage::get(self).tax;
+            new_inc = self._rpow(tax, age.into());
             inc = new_inc;
             TubStorage::get_mut(self).chi = self._rmul(chi_, inc);
             TokenRef::mint(
@@ -324,8 +316,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             )?;
         }
         if TubStorage::get(self).fee != self._ray() {
-        	let fee=TubStorage::get(self).fee;
-            new_inc = self._rmul(inc, self._rpow(fee,age.into()));
+            let fee = TubStorage::get(self).fee;
+            new_inc = self._rmul(inc, self._rpow(fee, age.into()));
             inc = new_inc;
         }
         if inc != self._ray() {
@@ -394,9 +386,9 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         {
             return Err(TubError::InvalidGiveCup);
         }
-        let mut new_cup=TubStorage::get_mut(self).cups.get(cup).clone().unwrap();
-        new_cup.lad=guy;
-        TubStorage::get_mut(self).cups.insert(cup,&new_cup);
+        let mut new_cup = TubStorage::get_mut(self).cups.get(cup).clone().unwrap();
+        new_cup.lad = guy;
+        TubStorage::get_mut(self).cups.insert(cup, &new_cup);
         Ok(())
     }
     default fn lock(&mut self, cup: u128, wad: u128) -> Result<(), TubError> {
@@ -414,24 +406,26 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             })
             .ink;
         let new_ink = self._add(ink, wad);
-        let mut new_cup=TubStorage::get_mut(self)
+        let mut new_cup = TubStorage::get_mut(self)
             .cups
-            .get(cup).clone()
+            .get(cup)
+            .clone()
             .unwrap_or(Cup {
                 lad: ZERO_ADDRESS.into(),
                 ink: 0,
                 art: 0,
                 ire: 0,
             });
-        new_cup.ink=new_ink;
-        TubStorage::get_mut(self).cups.insert(cup,&new_cup);
+        new_cup.ink = new_ink;
+        TubStorage::get_mut(self).cups.insert(cup, &new_cup);
         TokenRef::transfer_from_builder(
             &TubStorage::get(self).skr_address,
             Self::env().caller(),
             Self::env().account_id(),
             wad,
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
         Ok(())
@@ -453,15 +447,16 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         }
         let ink = TubStorage::get(self).cups.get(cup).unwrap().ink;
         let new_ink = self._sub(ink, wad);
-        let mut new_cup=TubStorage::get_mut(self).cups.get(cup).clone().unwrap();
-        new_cup.ink=new_ink;
-        TubStorage::get_mut(self).cups.insert(cup,&new_cup);
+        let mut new_cup = TubStorage::get_mut(self).cups.get(cup).clone().unwrap();
+        new_cup.ink = new_ink;
+        TubStorage::get_mut(self).cups.insert(cup, &new_cup);
         TokenRef::transfer_builder(
             &TubStorage::get(self).skr_address,
             Self::env().caller(),
             wad,
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
         if !self.safe(cup) {
@@ -497,10 +492,10 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         let ire = TubStorage::get(self).cups.get(cup).unwrap().ire;
         let rhi = self.get_rhi().unwrap();
         let new_ire = self._add(ire, self._rdiv(wad, rhi));
-        let mut new_cup=TubStorage::get(self).cups.get(cup).clone().unwrap();
-	 new_cup.art=new_art;
+        let mut new_cup = TubStorage::get(self).cups.get(cup).clone().unwrap();
+        new_cup.art = new_art;
         new_cup.ire = new_ire;
-        TubStorage::get_mut(self).cups.insert(cup,&new_cup);
+        TubStorage::get_mut(self).cups.insert(cup, &new_cup);
         let rum = TubStorage::get(self).rum;
         let new_rum = self._add(rum, self._rdiv(wad, chi));
         TubStorage::get_mut(self).rum = new_rum;
@@ -548,11 +543,10 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             .ire;
         let rhi = self.get_rhi().unwrap();
         let new_ire = self._sub(ire, self._rdiv(self._add(wad, owe), rhi));
-        let mut new_cup=TubStorage::get(self).cups.get(cup).clone().unwrap();
-	new_cup.art=new_art;
+        let mut new_cup = TubStorage::get(self).cups.get(cup).clone().unwrap();
+        new_cup.art = new_art;
         new_cup.ire = new_ire;
-        TubStorage::get_mut(self).cups.insert(cup,&new_cup);
-     
+        TubStorage::get_mut(self).cups.insert(cup, &new_cup);
         let rum = TubStorage::get(self).rum;
         let new_rum = self._sub(rum, self._rdiv(wad, chi));
         TubStorage::get_mut(self).rum = new_rum;
@@ -569,9 +563,10 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
                 TubStorage::get(self).pit,
                 self._wdiv(owe, val),
                 Vec::<u8>::new(),
-            ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
-        .fire()
-        .unwrap()?;
+            )
+            .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+            .fire()
+            .unwrap()?;
         }
         Ok(())
     }
@@ -627,18 +622,19 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             .art;
         let new_rum = self._sub(rum, art);
         TubStorage::get_mut(self).rum = new_rum;
-        let mut new_cup=TubStorage::get_mut(self)
+        let mut new_cup = TubStorage::get_mut(self)
             .cups
-            .get(cup).clone()
+            .get(cup)
+            .clone()
             .unwrap_or(Cup {
                 lad: ZERO_ADDRESS.into(),
                 ink: 0,
                 art: 0,
                 ire: 0,
             });
-        new_cup.art=0;
-        new_cup.ire=0;
-        TubStorage::get_mut(self).cups.insert(cup,&new_cup);
+        new_cup.art = 0;
+        new_cup.ire = 0;
+        TubStorage::get_mut(self).cups.insert(cup, &new_cup);
         let tag = self.tag();
         let par = VoxTraitRef::get_par(&TubStorage::get(self).vox_address);
         let axe = TubStorage::get(self).axe;
@@ -661,13 +657,14 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             TubStorage::get(self).tap,
             owe,
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
-        let new_ink= self._sub(ink, owe);
-        let mut new_cup2=TubStorage::get(self).cups.get(cup).clone().unwrap();
-	 new_cup2.ink=new_ink;
-        TubStorage::get_mut(self).cups.insert(cup,&new_cup2);
+        let new_ink = self._sub(ink, owe);
+        let mut new_cup2 = TubStorage::get(self).cups.get(cup).clone().unwrap();
+        new_cup2.ink = new_ink;
+        TubStorage::get_mut(self).cups.insert(cup, &new_cup2);
         Ok(())
     }
     #[modifiers(only_role(TOP))]
@@ -684,7 +681,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             TubStorage::get(self).tap,
             jam,
             Vec::<u8>::new(),
-        ).call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
+        )
+        .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
         Ok(())

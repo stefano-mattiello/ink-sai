@@ -1,6 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//governance token fot the sai stablecoin
 #[brush::contract]
 pub mod gov {
     use brush::contracts::psp22::extensions::{burnable::*, metadata::*, mintable::*};

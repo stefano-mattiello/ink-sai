@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//Testing version of the CDP record engine
+//It add some function to the Tub contracts to simulate the passage of time
 #[brush::contract]
 pub mod tubtest {
     use brush::{contracts::access_control::*, traits::ZERO_ADDRESS};
@@ -85,6 +86,14 @@ pub mod tubtest {
                 self.era = era + age;
             }
         }
+        #[ink(message)]
+        pub fn chi_no_update(&self) -> u128 {
+            self.tub.chi
+        }
+        #[ink(message)]
+        pub fn rhi_no_update(&self) -> u128 {
+            self.tub.rhi
+        }
     }
 
     #[cfg(test)]
@@ -104,6 +113,7 @@ pub mod tubtest {
                 .expect("Should grant the role");
             tubtest
         }
+        //verify you can set an address for tap
         #[ink::test]
         fn turn_work() {
             let alice = ink_env::test::default_accounts::<ink_env::DefaultEnvironment>().alice;
@@ -112,7 +122,7 @@ pub mod tubtest {
             let bob = ink_env::test::default_accounts::<ink_env::DefaultEnvironment>().bob;
             assert_eq!(tubtest.turn(bob), Err(TubError::InvalidTurn));
         }
-
+        //verify that someone with MOM role can modify gap parameter
         #[ink::test]
         fn mold_gap_work() {
             let alice = ink_env::test::default_accounts::<ink_env::DefaultEnvironment>().alice;

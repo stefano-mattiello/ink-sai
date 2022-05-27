@@ -12,30 +12,37 @@ use brush::{
     modifiers,
     traits::Balance,
 };
+//Top can stop the system with cage function
 pub const TOP: RoleType = ink_lang::selector_id!("TOP");
+//Mom can set some parameters
 pub const MOM: RoleType = ink_lang::selector_id!("MOM");
 impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait for T {
+    // Sai balance, surplus transferred from drip
     default fn joy(&self) -> Balance {
         PSP22Ref::balance_of(&TapStorage::get(self).sai_address, Self::env().account_id())
     }
 
+    // Sin balance, bad debt transferred from bite
     default fn woe(&self) -> Balance {
         PSP22Ref::balance_of(&TapStorage::get(self).sin_address, Self::env().account_id())
     }
 
+    //SKR balance, collateral pending liquidation
     default fn fog(&self) -> Balance {
         PSP22Ref::balance_of(&TapStorage::get(self).skr_address, Self::env().account_id())
     }
 
+    //set gap parameter
     #[modifiers(only_role(MOM))]
     default fn mold(&mut self, val: u128) -> Result<(), TapError> {
         TapStorage::get_mut(self).gap = val;
         Ok(())
     }
 
+    //Sai can be canceled out with Sin via heal
     default fn heal(&self) -> Result<(), TapError> {
-        let joy = self.joy();
-        let woe = self.woe();
+        let joy = self.joy(); // Sai balance
+        let woe = self.woe(); //Sin balance
         if joy == 0 || woe == 0 {
             return Ok(());
         }
@@ -53,22 +60,26 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
         Ok(())
     }
 
+    //get the price of SKR in Sai
     default fn s2s(&self) -> u128 {
         let tag = TubTraitRef::tag(&TapStorage::get(self).tub_address);
         let par = VoxTraitRef::get_par(&TapStorage::get(self).vox_address);
         self._rdiv(tag, par)
     }
 
+    //get the amount of skr in sai for boom
     default fn bid(&self, wad: u128) -> u128 {
         let gap = TapStorage::get(self).gap;
         self._rmul(wad, self._wmul(self.s2s(), self._sub(2 * self._wad(), gap)))
     }
 
+    //get the amount of skr in sai for bust
     default fn ask(&self, wad: u128) -> u128 {
         let gap = TapStorage::get(self).gap;
         self._rmul(wad, self._wmul(self.s2s(), gap))
     }
 
+    //collateral sell off called by bust
     default fn flip(&self, wad: u128) -> Result<(), TapError> {
         let amount_of_sai = self.ask(wad);
         if amount_of_sai == 0 {
@@ -97,6 +108,7 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
         Ok(())
     }
 
+    //inflate and sell called by bust
     default fn flop(&self, wad: u128) -> Result<(), TapError> {
         let fog = self.fog();
         TokenRef::mint(
@@ -110,7 +122,7 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
         }
         Ok(())
     }
-
+    //function that execute boom
     default fn flap(&self, wad: u128) -> Result<(), TapError> {
         self.heal()?;
         PSP22Ref::transfer_builder(
@@ -129,6 +141,8 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
         )?;
         Ok(())
     }
+
+    //sell SKR in return for Sai (decreases fog, increases joy and woe, can increase SKR supply)
     #[brush::modifiers(when_not_paused)]
     default fn bust(&mut self, wad: u128) -> Result<(), TapError> {
         if wad > self.fog() {
@@ -138,12 +152,13 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
         }
         Ok(())
     }
+    //sell Sai in return for SKR (decreases joy and woe, decreases SKR supply)
     #[brush::modifiers(when_not_paused)]
     default fn boom(&mut self, wad: u128) -> Result<(), TapError> {
         self.flap(wad)?;
         Ok(())
     }
-
+    // shutting down the system
     #[modifiers(only_role(TOP))]
     #[brush::modifiers(when_not_paused)]
     default fn cage(&mut self, fix: u128) -> Result<(), TapError> {
@@ -151,6 +166,7 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
         TapStorage::get_mut(self).fix = fix;
         Ok(())
     }
+    //exchange sai for gems when the system is caged
     #[brush::modifiers(when_paused)]
     default fn cash(&mut self, wad: u128) -> Result<(), TapError> {
         let gem_address = TubTraitRef::get_gem(&TapStorage::get(self).tub_address);
@@ -192,6 +208,7 @@ impl<T: TapStorage + PausableStorage + AccessControlStorage + SomeMath> TapTrait
         .unwrap()?;
         Ok(())
     }
+    //burn skr when the system is caged
     #[brush::modifiers(when_paused)]
     default fn vent(&mut self) -> Result<(), TapError> {
         let fog = self.fog();

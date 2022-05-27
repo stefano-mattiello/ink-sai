@@ -15,6 +15,6 @@ In particular the ```wad``` variables are numbers with 18 digits of precision an
     
 ## Fails
 
-It seems that currently Redspot fails to construct error types (see [here](https://github.com/patractlabs/redspot/issues/155)), therefore I can not find a way to make the tests successful when the function throw an error. 
+It seems that currently Redspot fails to construct error types (see [here](https://github.com/patractlabs/redspot/issues/155)), therefore I can not find a way to make the tests successful when the function throws an error. 
 
-Hence the line of code that are expected to throw errors are now commented (so that the test are marked as passed), but you can verify that uncomment them will result in an error.
+Hence the line of code that are expected to throw errors are now commented (so that the tests are marked as passed), but you can verify that uncommenting them will result in an error.

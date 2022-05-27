@@ -1,14 +1,17 @@
 use primitive_types::U256;
 #[brush::trait_definition]
 pub trait SomeMath {
+    //return 1 with 27 digits of precision
     fn _ray(&self) -> u128 {
         //10_u128.pow(27_u32)
         1000000000000000000000000000
     }
+    //return 1 with 18 digits of precision
     fn _wad(&self) -> u128 {
         //10_u128.pow(18_u32)
         1000000000000000000
     }
+    //multiplication between two nubers with 27 digits of precision
     #[ink(message)]
     fn _rmul(&self, x: u128, y: u128) -> u128 {
         let result = U256::from(x)
@@ -19,6 +22,7 @@ pub trait SomeMath {
             / U256::from(self._ray());
         result.as_u128()
     }
+    //division between two nubers with 27 digits of precision
     #[ink(message)]
     fn _rdiv(&self, x: u128, y: u128) -> u128 {
         let result = U256::from(x)
@@ -29,6 +33,7 @@ pub trait SomeMath {
             / U256::from(y);
         result.as_u128()
     }
+    //division between two nubers with 18 digits of precision
     #[ink(message)]
     fn _wdiv(&self, x: u128, y: u128) -> u128 {
         let result = U256::from(x)
@@ -47,6 +52,7 @@ pub trait SomeMath {
     fn _add(&self, x: u128, y: u128) -> u128 {
         x.checked_add(y).unwrap()
     }
+    //multiplication between two nubers with 18 digits of precision
     #[ink(message)]
     fn _wmul(&self, x: u128, y: u128) -> u128 {
         let result = U256::from(x)
@@ -64,6 +70,7 @@ pub trait SomeMath {
             y
         }
     }
+    //power of two nubers with 27 digits of precision
     #[ink(message)]
     fn _rpow(&self, x: u128, n: u128) -> u128 {
         let mut z: u128;

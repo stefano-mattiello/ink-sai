@@ -1,5 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
+//The Liquidator contracts
+//See the implementation of TapTrait for its function
 #[brush::contract]
 pub mod tap {
     use brush::contracts::{access_control::*, pausable::*};

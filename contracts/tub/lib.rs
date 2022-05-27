@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//CDP record engine
+//See the implementation of TubTrait for its function
 #[brush::contract]
 pub mod tub {
     use brush::{contracts::access_control::*, traits::ZERO_ADDRESS};

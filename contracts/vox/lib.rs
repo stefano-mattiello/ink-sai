@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//target price feed
+//See the implementation of VoxTrait for its function
 #[brush::contract]
 pub mod vox {
     use brush::contracts::access_control::*;

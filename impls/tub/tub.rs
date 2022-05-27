@@ -13,45 +13,64 @@ use ink_prelude::vec::Vec;
 pub const TOP: RoleType = ink_lang::selector_id!("TOP");
 pub const MOM: RoleType = ink_lang::selector_id!("MOM");
 impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
+    //getter functions
+    //liquidation ratio
     default fn get_mat(&self) -> u128 {
         TubStorage::get(self).mat
     }
+    //stability fee
+    // It makes debt (tab) increase over time
     default fn get_tax(&self) -> u128 {
         TubStorage::get(self).tax
     }
+    //governance fee
+    //It makes debt (rap) increase over time.
     default fn get_fee(&self) -> u128 {
         TubStorage::get(self).fee
     }
+    //total debt (art) across all CDPs
     default fn get_rum(&self) -> u128 {
         TubStorage::get(self).rum
     }
+    //Liquidation penalty
+    //penalty applied to bad CDP holders
     default fn get_axe(&self) -> u128 {
         TubStorage::get(self).axe
     }
+    //gem address
     default fn get_gem(&self) -> AccountId {
         TubStorage::get(self).gem_address
     }
+    //sai address
     default fn get_sai(&self) -> AccountId {
         TubStorage::get(self).sai_address
     }
+    //sin address
     default fn get_sin(&self) -> AccountId {
         TubStorage::get(self).sin_address
     }
+    //skr address
     default fn get_skr(&self) -> AccountId {
         TubStorage::get(self).skr_address
     }
+    //vox address
     default fn get_vox(&self) -> AccountId {
         TubStorage::get(self).vox_address
     }
+    //cage flag
     default fn get_off(&self) -> bool {
         TubStorage::get(self).off
     }
+    //post cage exit flag
     default fn get_out(&self) -> bool {
         TubStorage::get(self).out
     }
+    //gap between buy and sell
+    //spread on `join` and `exit`
     default fn get_gap(&self) -> u128 {
         TubStorage::get(self).gap
     }
+    //pip address
     default fn get_pip(&self) -> AccountId {
         TubStorage::get(self).pip_address
     }
@@ -59,6 +78,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         Self::env().block_timestamp()
     }
 
+    //return address of the owner of a cup(CDP)
     default fn lad(&self, cup: u128) -> AccountId {
         TubStorage::get(self)
             .cups
@@ -71,6 +91,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             })
             .lad
     }
+    //locked SKR collateral of a cup
     default fn ink(&self, cup: u128) -> Balance {
         TubStorage::get(self)
             .cups
@@ -83,6 +104,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             })
             .ink
     }
+    //debt of a cup
     default fn art(&self, cup: u128) -> Balance {
         TubStorage::get(self)
             .cups
@@ -107,6 +129,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             })
             .ire
     }
+    //dinamic CDP debt of a cup
+    //art*chi
     default fn tab(&mut self, cup: u128) -> Balance {
         let chi = self.get_chi().unwrap();
         let art = TubStorage::get(self)
@@ -121,6 +145,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             .art;
         self._rmul(art, chi)
     }
+    //outstanding fee of cup
+    //(ire*rhi)-tab
     default fn rap(&mut self, cup: u128) -> u128 {
         let rhi = self.get_rhi().unwrap();
         let tab = self.tab(cup);
@@ -136,16 +162,21 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             .ire;
         self._sub(self._rmul(ire, rhi), tab)
     }
+    // the total debt backed by CDPs
     default fn din(&mut self) -> u128 {
         let chi = self.get_chi().unwrap();
         self._rmul(TubStorage::get(self).rum, chi)
     }
+    //Abstracted Collateral backing CDPs
     default fn air(&self) -> Balance {
         TokenRef::balance_of(&TubStorage::get(self).skr_address, Self::env().account_id())
     }
+    //Real collateral that SKR holders share
     default fn pie(&self) -> Balance {
         PSP22Ref::balance_of(&TubStorage::get(self).gem_address, Self::env().account_id())
     }
+    //set parameters
+    //acces restricted to mom role
     #[modifiers(only_role(MOM))]
     default fn mold(&mut self, param: u8, val: u128) -> Result<(), TubError> {
         if param == 1 {
@@ -180,22 +211,28 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         }
         Ok(())
     }
+    //set parameters
+    //acces restricted to mom role
     #[modifiers(only_role(MOM))]
     default fn set_pip(&mut self, pip_address: AccountId) -> Result<(), TubError> {
         TubStorage::get_mut(self).pip_address = pip_address;
         Ok(())
     }
+    //set parameters
+    //acces restricted to mom role
     #[modifiers(only_role(MOM))]
     default fn set_pep(&mut self, pep_address: AccountId) -> Result<(), TubError> {
         TubStorage::get_mut(self).pep_address = pep_address;
         Ok(())
     }
+    //set parameters
+    //acces restricted to mom role
     #[modifiers(only_role(MOM))]
     default fn set_vox(&mut self, vox_address: AccountId) -> Result<(), TubError> {
         TubStorage::get_mut(self).vox_address = vox_address;
         Ok(())
     }
-
+    //set parameters
     default fn turn(&mut self, tap_address: AccountId) -> Result<(), TubError> {
         if TubStorage::get(self).tap != ZERO_ADDRESS.into() || tap_address == ZERO_ADDRESS.into() {
             return Err(TubError::InvalidTurn);
@@ -203,6 +240,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         TubStorage::get_mut(self).tap = tap_address;
         Ok(())
     }
+    //The gem/skr exchange rate
     default fn per(&self) -> u128 {
         let total_skr_supply = TokenRef::total_supply(&TubStorage::get(self).skr_address);
         if total_skr_supply == 0 {
@@ -212,12 +250,14 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             self._rdiv(pie, total_skr_supply)
         }
     }
+    //skr in gem for join
     default fn ask(&self, wad: u128) -> u128 {
         let per = self.per();
         let gap = TubStorage::get(self).gap;
         let mul = self._wmul(per, gap);
         self._rmul(wad, mul)
     }
+    //skr in gem for exit
     default fn bid(&self, wad: u128) -> u128 {
         let per = self.per();
         self._rmul(
@@ -225,6 +265,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             self._wmul(per, self._sub(2 * self._wad(), TubStorage::get(self).gap)),
         )
     }
+    //buy SKR for gems
     default fn join(&mut self, wad: u128) -> Result<(), TubError> {
         if TubStorage::get(self).off {
             return Err(TubError::Paused);
@@ -245,13 +286,6 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         .call_flags(ink_env::CallFlags::default().set_allow_reentry(true))
         .fire()
         .unwrap()?;
-        /*PSP22Ref::transfer_from(
-            &TubStorage::get(self).gem_address,
-            caller,
-            to,
-            amount_of_gem,
-            Vec::<u8>::new(),
-        )?;*/
         TokenRef::mint(
             &TubStorage::get(self).skr_address,
             Self::env().caller(),
@@ -259,6 +293,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         )?;
         Ok(())
     }
+    //sell SKR for gems
     default fn exit(&mut self, wad: u128) -> Result<(), TubError> {
         if TubStorage::get(self).off && !(TubStorage::get(self).out) {
             return Err(TubError::Paused);
@@ -280,14 +315,17 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         )?;
         Ok(())
     }
+    // product of accumulated rates that converts art into a real debt amount.
     default fn get_chi(&mut self) -> Result<u128, TubError> {
         self.drip()?;
         Ok(TubStorage::get(self).chi)
     }
+    //internal debt price (governance included)
     default fn get_rhi(&mut self) -> Result<u128, TubError> {
         self.drip()?;
         Ok(TubStorage::get(self).rhi)
     }
+    //recalculate the internal debt price
     default fn drip(&mut self) -> Result<(), TubError> {
         if TubStorage::get(self).off {
             return Ok(());
@@ -326,7 +364,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         }
         Ok(())
     }
-
+    //get the reference price (ref per skr)
     default fn tag(&self) -> u128 {
         if TubStorage::get(self).off {
             TubStorage::get(self).fit
@@ -339,6 +377,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
             )
         }
     }
+    //aggregates price information from the vox and the tub and compares the reference value of a CDPs debt and collateral
+    //return true if the cup is safe
     default fn safe(&mut self, cup: u128) -> bool {
         let tag = self.tag();
         let ink = self.ink(cup);
@@ -352,6 +392,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         let min = self._rmul(con, mat);
         pro >= min
     }
+    //create a new CDP
     default fn open(&mut self) -> Result<u128, TubError> {
         if TubStorage::get(self).off {
             return Err(TubError::Paused);
@@ -370,6 +411,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         );
         Ok(cup)
     }
+    //transfer ownership (changes lad)
     default fn give(&mut self, cup: u128, guy: AccountId) -> Result<(), TubError> {
         if Self::env().caller()
             != TubStorage::get(self)
@@ -391,6 +433,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         TubStorage::get_mut(self).cups.insert(cup, &new_cup);
         Ok(())
     }
+    //deposit SKR collateral (increases ink)
     default fn lock(&mut self, cup: u128, wad: u128) -> Result<(), TubError> {
         if TubStorage::get(self).off {
             return Err(TubError::Paused);
@@ -430,6 +473,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         .unwrap()?;
         Ok(())
     }
+    //remove excess SKR collateral from a cup
+    // withdraw SKR collateral (decreases ink)
     default fn free(&mut self, cup: u128, wad: u128) -> Result<(), TubError> {
         if Self::env().caller()
             != TubStorage::get(self)
@@ -464,7 +509,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         }
         Ok(())
     }
-
+    //create Sai (increases art, rum)
     default fn draw(&mut self, cup: u128, wad: u128) -> Result<(), TubError> {
         if TubStorage::get(self).off {
             return Err(TubError::Paused);
@@ -512,6 +557,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         }
         Ok(())
     }
+    //return Sai (decreases art, rum)
     default fn wipe(&mut self, cup: u128, wad: u128) -> Result<(), TubError> {
         if TubStorage::get(self).off {
             return Err(TubError::Paused);
@@ -570,6 +616,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         }
         Ok(())
     }
+    //clear all CDP debt, unlock all collateral, and delete the record
     default fn shut(&mut self, cup: u128) -> Result<(), TubError> {
         if TubStorage::get(self).off {
             return Err(TubError::Paused);
@@ -599,6 +646,7 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         TubStorage::get_mut(self).cups.remove(cup);
         Ok(())
     }
+    // liquidate CDP if not safe(zeros art, decreases ink, mints sin to tap)
     default fn bite(&mut self, cup: u128) -> Result<(), TubError> {
         if self.safe(cup) && !TubStorage::get(self).off {
             return Err(TubError::InvalidBite);
@@ -667,6 +715,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         TubStorage::get_mut(self).cups.insert(cup, &new_cup2);
         Ok(())
     }
+    //lock the system
+    //access restricted to top
     #[modifiers(only_role(TOP))]
     default fn cage(&mut self, fit: u128, jam: u128) -> Result<(), TubError> {
         if TubStorage::get(self).off || fit == 0 {
@@ -687,6 +737,8 @@ impl<T: TubStorage + AccessControlStorage + SomeMath> TubTrait for T {
         .unwrap()?;
         Ok(())
     }
+    //unlock the system
+    //access restricted to top
     #[modifiers(only_role(TOP))]
     default fn flow(&mut self) -> Result<(), TubError> {
         if !TubStorage::get(self).off {

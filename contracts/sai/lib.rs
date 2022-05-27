@@ -1,6 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//The SAI token
 #[brush::contract]
 pub mod sai {
     use brush::contracts::{
@@ -23,6 +23,7 @@ pub mod sai {
         #[PSP22MetadataStorageField]
         metadata: PSP22MetadataData,
     }
+    //define a role to restrict access to mint and burn function
     const TUB_OR_TAP: RoleType = ink_lang::selector_id!("TUB_OR_TAP");
 
     impl PSP22 for Sai {}
@@ -32,6 +33,7 @@ pub mod sai {
     impl PSP22Metadata for Sai {}
 
     impl PSP22Burnable for Sai {
+        //add a access control modifier to the burn function
         #[ink(message)]
         #[modifiers(only_role(TUB_OR_TAP))]
         fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
@@ -40,6 +42,7 @@ pub mod sai {
     }
 
     impl PSP22Mintable for Sai {
+        //add a access control modifier to the mint function
         #[ink(message)]
         #[modifiers(only_role(TUB_OR_TAP))]
         fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {

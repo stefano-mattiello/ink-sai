@@ -1,6 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//A contract where you can send gem and virtually burn it
 #[brush::contract]
 pub mod pit {
     use ink_sai::traits::pit::*;

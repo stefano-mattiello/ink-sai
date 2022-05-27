@@ -25,7 +25,7 @@ There are four tokens in the system:
   
 </ul> 
 
-Collateral holders deposit their collateral using ```join``` and receive ```skr``` tokens proportional to their deposit. ```skr``` can be redeemed for collateral with ```exit```. You will get more or less ```gem``` tokens for each ```skr``` depending whether the system made a profit or loss while you were exposed.
+Collateral holders deposit their collateral using ```join``` and receive ```skr``` tokens proportional to their deposit. ```skr``` can be redeemed for collateral with ```exit```. You will get more or less ```gem``` tokens for each ```skr``` depending on whether the system made a profit or loss while you were exposed.
 
 The oracle updates the ```GEM:REF``` and ```GOV:REF``` price feeds. These are the only external real-time input to the system.
 
@@ -53,7 +53,7 @@ Any remaining Sai surplus (```joy```) can be purchased with ```boom```, in excha
   
   In the original sai project ```dad``` is an authority contract to whom other contracts ask permission to call specific functions. In order to simplify this mechanism we eliminate the dad contract and we use the ```access control``` library by Openbrush.
   
-Therefore every contract will be instantiate with an admin (the caller) that have the power to grant and revoke roles to other addresses and we will use a modifier to restrict the access to some functions to specific roles. </li>
+Therefore every contract will be instantiated with an admin (the caller) that have the power to grant and revoke roles to other addresses and we will use a modifier to restrict the access to some functions to specific roles. </li>
   
 <li>In this projects (like in the original one) the token are represented as decimal number with 18 digits of precision and other parameters as decimal number with 27 digits of precision (they are respectively called wad and ray).
   
@@ -61,7 +61,7 @@ Therefore every contract will be instantiate with an admin (the caller) that hav
   
   We choose to keep it this way so that we can run the tests with the same parameters of the tests in the original repository, to make sure that this version works as expected.
   
-  However in future it will be possible to use less digit of precision easily since most (or all) of the operation are defined in the ```somemath``` traits, so it will be sufficient modify that (and of course the tests and maybe some constructor).
+  However in future it will be possible to use less digit of precision easily since most of (or all) the operation are defined in the ```somemath``` traits, so it will be sufficient modify that (and of course the tests and maybe some constructor).
   </li>
 
 </ul>
@@ -74,7 +74,7 @@ The whole project can be seen as a more complex application of the [example proj
 
 ## Compiler Warning/Error
 
-Compiling the project the compiler will throw some warning (or error in latest version of the compiler) like 
+Compiling the project the compiler will throw some warning (or error in the latest version of the compiler) like 
 
       warning: `#[doc(hidden)]` is ignored on trait impl items
         --> /home/stefano/repos/ink_sai_tests/ink_sai/traits/vox.rs:12:1
@@ -139,7 +139,7 @@ for every interaction with the node, however the test are working fine.
 
 ## Deploy
 
-Currently there is not a script or a contract to deploy all the structure of the project, however the setup function on the ```tests/saitest.ts``` can be an example of what should be done.
+Currently there is not a script or a contract to deploy all the structure of the project, however the setup function in ```tests/saitest.ts``` can be an example of what should be done.
 
 
 ## Contributing

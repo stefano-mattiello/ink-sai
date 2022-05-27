@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//A contracts used as oracle on the tests
+//it have two function: set (to store a value) and read (return the value stored)
 #[brush::contract]
 pub mod pip {
     use ink_sai::traits::oracle::*;

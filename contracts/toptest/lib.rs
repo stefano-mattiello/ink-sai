@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//Testing version of the Global Settlement Manager
+//It add some function to the Top contracts to simulate the passage of time
 #[brush::contract]
 pub mod toptest {
     use brush::contracts::access_control::*;

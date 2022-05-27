@@ -1,6 +1,6 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//contracts with restricted funtion that can modify the parameters of the system
 #[brush::contract]
 pub mod mom {
     use brush::contracts::access_control::*;

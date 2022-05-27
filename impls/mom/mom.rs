@@ -8,7 +8,12 @@ pub use crate::traits::tub::*;
 pub use crate::traits::vox::VoxTraitRef;
 
 use brush::{contracts::access_control::*, modifiers, traits::AccountId};
+
+//define a role to restrict access to the function
+//manager is an external account that can call mom to modify the parameter of tub, tap and vox
 pub const MANAGER: RoleType = ink_lang::selector_id!("MANAGER");
+
+//All the function are just function to set parameter, some of them make some check on the input
 impl<T: MomStorage + AccessControlStorage + SomeMath> MomTrait for T {
     #[modifiers(only_role(MANAGER))]
     default fn set_cap(&mut self, wad: u128) -> Result<(), MomError> {

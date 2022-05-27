@@ -1,15 +1,13 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//a token used as collateral
 #[brush::contract]
 pub mod gem {
     use brush::contracts::psp22::extensions::{burnable::*, metadata::*, mintable::*};
 
-
     use ink_prelude::string::String;
     use ink_storage::traits::SpreadAllocate;
 
- 
     #[ink(storage)]
     #[derive(Default, SpreadAllocate, PSP22Storage, PSP22MetadataStorage)]
     pub struct Gem {
@@ -23,8 +21,7 @@ pub mod gem {
     impl PSP22 for Gem {}
 
     // implement Metadata Trait for our gem
-    impl PSP22Metadata for Gem {
-    }
+    impl PSP22Metadata for Gem {}
 
     // implement Burnable Trait for our gem
     impl PSP22Burnable for Gem {}

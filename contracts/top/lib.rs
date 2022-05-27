@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//Global Settlement Manager
+//See the implementation of TopTrait for its function
 #[brush::contract]
 pub mod top {
     use brush::contracts::access_control::*;

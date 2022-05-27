@@ -1,6 +1,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 #![feature(min_specialization)]
-
+//Testing version of the target price feed
+//It add some function to the Vox contracts to simulate the passage of time
 #[brush::contract]
 pub mod voxtest {
     use brush::contracts::access_control::*;

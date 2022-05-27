@@ -13,21 +13,22 @@ use brush::{
     modifiers,
     traits::Timestamp,
 };
+//manager role can shut the system calling the cage function of top
+//top then will lock the system
 pub const MANAGER: RoleType = ink_lang::selector_id!("MANAGER");
 impl<T: TopStorage + AccessControlStorage + SomeMath> TopTrait for T {
     default fn era(&self) -> Timestamp {
         Self::env().block_timestamp()
     }
-    
-    default fn fix(&self) -> u128{
-    TopStorage::get(self).fix
+    //gem per sai settlement price
+    default fn fix(&self) -> u128 {
+        TopStorage::get(self).fix
     }
-    
-    
-    default fn fit(&self) ->u128{
-    TopStorage::get(self).fit
+    //gem per skr settlement price
+    default fn fit(&self) -> u128 {
+        TopStorage::get(self).fit
     }
-
+    //internal function to lock the system at a given prive
     default fn cage_at_price(&mut self, price: u128) -> Result<(), TopError> {
         if TubTraitRef::get_off(&TopStorage::get(self).tub_address) || price == 0 {
             return Err(TopError::InvalidCage);
@@ -61,6 +62,7 @@ impl<T: TopStorage + AccessControlStorage + SomeMath> TopTrait for T {
         TapTraitRef::vent(&TopStorage::get(self).tap_address)?;
         Ok(())
     }
+    //lock the system, restricted to manager
     #[modifiers(only_role(MANAGER))]
     fn cage(&mut self) -> Result<(), TopError> {
         let par = VoxTraitRef::get_par(&TopStorage::get(self).vox_address);
@@ -69,7 +71,7 @@ impl<T: TopStorage + AccessControlStorage + SomeMath> TopTrait for T {
         self.cage_at_price(self._rdiv(val, par))?;
         Ok(())
     }
-
+    //unlock the system after all CDPs are processed or a timeout has expired.
     fn flow(&mut self) -> Result<(), TopError> {
         if !TubTraitRef::get_off(&TopStorage::get(self).tub_address) {
             return Err(TopError::InvalidFlow);

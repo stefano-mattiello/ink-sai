@@ -21,6 +21,7 @@ pub mod skr {
         #[PSP22MetadataStorageField]
         metadata: PSP22MetadataData,
     }
+    //define a role to restrict access to mint and burn function
     const TUB_OR_TAP: RoleType = ink_lang::selector_id!("TUB_OR_TAP");
 
     impl PSP22 for Skr {}
@@ -30,6 +31,7 @@ pub mod skr {
     impl PSP22Metadata for Skr {}
 
     impl PSP22Burnable for Skr {
+        //add a access control modifier to the burn function
         #[ink(message)]
         #[modifiers(only_role(TUB_OR_TAP))]
         fn burn(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
@@ -38,6 +40,7 @@ pub mod skr {
     }
 
     impl PSP22Mintable for Skr {
+        //add a access control modifier to the burn function
         #[ink(message)]
         #[modifiers(only_role(TUB_OR_TAP))]
         fn mint(&mut self, account: AccountId, amount: Balance) -> Result<(), PSP22Error> {
